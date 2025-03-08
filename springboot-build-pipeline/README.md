@@ -1,57 +1,67 @@
-PRODUCTION GRADE DEVSECOPS CICD Pipeline
+Production-Grade DevSecOps CI/CD Pipeline 🚀  
 
-Prereq: Create 2 EC2 servers
+This project implements a secure, scalable, and automated CI/CD pipeline following DevSecOps best practices. The pipeline integrates security at every stage, ensuring high-quality, vulnerability-free applications deployed to production.  
 
-
- Build server with 15GB storage - t2.mirco
-
- Sonarqube server with 4 GB memory - t2.medium
-
-
-Step 1: Ensure all the necessary plugins are installed in Jenkins Master
+## 📌 Key Features 
+✅ Automated Security Scans: Integrated with SonarQube, Trivy, and Dependency-Check  
+✅ Continuous Integration & Delivery: CI/CD pipeline built using Jenkins & GitLab  
+✅ Infrastructure as Code (IaC): Automating setup using Docker & Shell scripts  
+✅ Quality Gates: Enforcing high-code quality with SonarQube Webhooks  
 
 
- Parameterized trigger plugin
+## 🚀 Prerequisites 
+Before setting up the pipeline, ensure you have:  
 
- Gitlab plugin
-
- Docker Pipeline
-
- Pipeline: AWS steps
-
- SonarQube Scanner
-
- Quality Gates
+- Two AWS EC2 Instances:  
+  - Build Server: `t2.micro` (15GB storage)  
+  - SonarQube Server: `t2.medium` (4GB RAM)  
 
 
-Step 2: Install Docker, Java8, Java11 & Trivy on Build Server
+## ⚙️ Step 1: Install Required Jenkins Plugins  
+Ensure the following plugins are installed on your Jenkins Master:  
+- Parameterized Trigger Plugin  
+- GitLab Plugin  
+- Docker Pipeline  
+- Pipeline: AWS Steps  
+- SonarQube Scanner 
+- Quality Gates  
 
-$ sudo ./setup.sh
+## **🛠 Step 2: Install Dependencies on Build Server**  
+Run the following command to install **Docker, Java8, Java11 & Trivy**:  
+```sh
+sudo ./setup.sh
+```
+
+## 🔍 Step 3: Deploy SonarQube on the t2.medium Server  
+Execute the commands below to install and run SonarQube:  
+```sh
+sudo apt update 
+sudo apt install -y docker.io 
+sudo usermod -a -G docker ubuntu 
+sudo docker run -d --name sonar -p 9000:9000 sonarqube:lts-community
+```
+
+## 🔑 Step 4: Configure Jenkins Credentials  
+Add the following credentials in Jenkins → Manage Credentials:  
+- SonarQube Token: `Global Analysis Token` (Secret Text)  
+- DockerHub Credentials: Username/Password  
+- GitLab Credentials: Username/Password  
+- Build Server Credentials: SSH Key for Jenkins Master  
 
 
-
-Step 3: Install Sonrqube on the t2.medium server
-
-$ sudo apt update
-$ sudo apt install -y docker.io
-$ sudo usermod -a -G docker ubuntu
-$ sudo docker run -d --name sonar -p 9000:9000 sonarqube:lts-community
-
+## 🌍 Step 5: Enable SonarQube Webhook & Install Dependency-Check Plugin 
+- Generate Webhook in SonarQube  
+- Set Jenkins URL as:  
+  ```sh
+  http://<JENKINS_URL>:8080/sonarqube-webhook/
+  ```
 
 
-Step 4: Add necessary credentials
+## 📢 Next Steps 
+- Extend the pipeline to deploy secure cloud applications 
+- Integrate RBAC, Secrets Management, and Compliance Checks  
+- Implement Zero Trust Security for end-to-end protection  
 
 
- Generate Sonarqube token of type "global analysis token" and add it as Jenkins credential of type "secret text"
-
- Add dockerhub credentials as username/password type
-
- Add Gitlab credentials
-
- Add Build server credentials for Jenkins master to connect
-
-
-Step 5: Enable Sonarqube webhook for Quality Gates & Install dependency-check plugin
-
-
- Generate webhook & add the Jenkins URL as follows - http://URL:8080/sonarqube-webhook/
+## 📜 License 
+This project is open-source and licensed under the MIT License.
